@@ -1,0 +1,24 @@
+@model System.Collections.IEnumerable
+
+@{		 
+	var grid = Html.DevExpress().GridView(
+			settings => {
+				settings.Name = "grid";
+				settings.KeyFieldName = "ProductID";
+				settings.CallbackRouteValues = new { Controller = "Home", Action = "InlineEditingPartial" };
+				settings.Settings.ShowPreview = true;
+				settings.Columns.Add("ProductID");
+				settings.Columns.Add("ProductName");
+				
+				settings.Columns.Add("Discontinued", MVCxGridViewColumnType.CheckBox);
+				
+				settings.Styles.PreviewRow.CssClass = "customPreviewRow";
+				settings.SetPreviewRowTemplateContent(container => {
+					Html.ViewContext.Writer.Write("<div><b>Units in Stock: {0} </b></div>", DataBinder.Eval(container.DataItem, "UnitsInStock"));
+				});
+				settings.ClientSideEvents.EndCallback = "OnEndCallback";
+				settings.ClientSideEvents.Init = "OnInit";
+
+			});
+}
+@grid.Bind(Model).GetHtml()
